@@ -6,24 +6,58 @@ import Placeholder from "../Placeholder.astro";
 ---
 
 <div class="h-screen w-screen p-4 bg-gray-100 dark:bg-gray-900">
-  <div class="grid grid-cols-4 gap-4 h-full w-full max-w-[2560px] mx-auto">
-    <!-- Time and Weather row -->
-    <div class="col-span-1 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4">
-      <DateTime />
-    </div>
-    <div class="col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4">
-      <Placeholder text="Quote of the Day Widget" />
-    </div>
-    <div class="col-span-1 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4">
-      <Weather />
-    </div>
-    
-    <!-- Additional widget slots -->
-    <div class="col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4">
-      <Placeholder text="Future Widget 1" />
-    </div>
-    <div class="col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4">
-      <Placeholder text="Future Widget 2" />
-    </div>
+  <div class="grid-container">
+    <!-- Grid Start -->
+  <div class="grid-cell area-1">
+    <DateTime />
+  </div>
+  <div class="grid-cell area-2">
+    <Weather />
+  </div>
+  <div class="grid-cell area-3">
+    <Placeholder text="Quote of the Day Widget" />
+  </div>
+
+  <div class="grid-cell area-4">
+    <Placeholder text="Team & Company Updates" />
+  </div>
+  <div class="grid-cell area-5">
+    <Placeholder text="Everyday Office Tips" />
+  </div>
+
+  <div class="grid-cell area-6">
+    <Placeholder text="Important Meetings / Stock Ticker / News" />
+  </div>
+  <!-- Grid End -->
+
   </div>
 </div> 
+
+
+
+<style>
+  .grid-container {  
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    gap: 10px;
+    grid-auto-flow: row;
+    grid-template-areas:
+      "area-1 area-2 area-3 area-3 area-3"
+      "area-4 area-4 area-4 area-6 area-6"
+      "area-5 area-5 area-5 area-6 area-6";
+
+    @apply h-full w-full max-w-[2560px] mx-auto;
+  }
+
+  .area-1 { grid-area: area-1; }
+  .area-2 { grid-area: area-2; }
+  .area-3 { grid-area: area-3; }
+  .area-4 { grid-area: area-4; }
+  .area-5 { grid-area: area-5; }
+  .area-6 { grid-area: area-6; }
+
+  .grid-cell{
+    @apply bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4;
+  }
+</style>

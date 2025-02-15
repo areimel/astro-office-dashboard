@@ -1,0 +1,12 @@
+---
+description: Custom Astro preferences
+globs: .astro
+---
+
+# Custom Astro Preferences
+
+This is a list of general personal preferences that I have for building projects using the Astro framework.
+
+- When writing imports, you should always use the import alias that are set up in [tsconfig.json](mdc:tsconfig.json) when possible.
+- When writing components, you should try to organize them via subfolders. You should first reference the existing components folder structure to determine naming conventions. You should also avoid going more than 2 folders deep past the parent components folder.
+- When writing components and organizing them into folders, you should avoid using barrel files. Even though they are more convenient, they increase build time and page load.
