@@ -1,0 +1,62 @@
+---
+import SwiperWrapper from '../../SliderComponents/SwiperWrapper.astro';
+import SwiperSlide from '../../SliderComponents/SwiperSlide.astro';
+import TestComponent1 from '../../SliderComponents/TestComponent1.astro';
+
+type SlideItem = {
+  time?: string;
+  description?: string;
+  symbol?: string;
+  price?: string;
+  change?: string;
+  headline?: string;
+};
+
+type Slide = {
+  title: string;
+  content: SlideItem[];
+};
+
+// Mock data - in a real application, this would come from an API or database
+const slides: Slide[] = [
+  {
+    title: "Important Meetings",
+    content: [
+      { time: "10:00 AM", description: "Team Standup" },
+      { time: "2:00 PM", description: "Project Review" },
+      { time: "4:30 PM", description: "Client Meeting" }
+    ]
+  },
+  {
+    title: "Market Overview",
+    content: [
+      { symbol: "AAPL", price: "$182.52", change: "+1.2%" },
+      { symbol: "MSFT", price: "$415.32", change: "+0.8%" },
+      { symbol: "GOOGL", price: "$145.87", change: "-0.5%" }
+    ]
+  },
+  {
+    title: "Latest News",
+    content: [
+      { headline: "Tech Industry Shows Strong Growth in Q1" },
+      { headline: "New AI Developments Transform Workplace" },
+      { headline: "Global Markets React to Economic Data" }
+    ]
+  }
+];
+---
+
+<SwiperWrapper
+  autoplay={true}
+  loop={true}
+  class="h-full"
+>
+  {slides.map((slide) => (
+    <SwiperSlide>
+      <TestComponent1 
+        title={slide.title}
+        items={slide.content}
+      />
+    </SwiperSlide>
+  ))}
+</SwiperWrapper> 

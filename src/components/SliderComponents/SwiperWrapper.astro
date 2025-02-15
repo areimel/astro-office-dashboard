@@ -1,0 +1,64 @@
+---
+interface Props {
+  direction?: 'horizontal' | 'vertical';
+  loop?: boolean;
+  autoplay?: boolean;
+  autoplayDelay?: number;
+  speed?: number;
+  pagination?: boolean;
+  navigation?: boolean;
+  class?: string;
+}
+
+const {
+  direction = 'horizontal',
+  loop = false,
+  autoplay = false,
+  autoplayDelay = 3000,
+  speed = 650,
+  pagination = true,
+  navigation = false,
+  class: className = '',
+} = Astro.props;
+
+// Construct autoplay options object if autoplay is enabled
+//const autoplayAttr = autoplay ? `'{"delay": ${autoplayDelay}}'` : 'false';
+---
+
+
+
+<swiper-container
+  class={`w-full h-full ${className}`}
+  direction={direction}
+  loop={loop ? 'true' : 'false'}
+  autoplay={autoplay}
+  speed={speed}
+  autoplay-delay={autoplayDelay}
+  pagination={pagination ? 'true' : 'false'}
+  navigation={navigation ? 'true' : 'false'}
+>
+  <slot />
+</swiper-container>
+
+<style is:global>
+  swiper-container {
+    --swiper-theme-color: #007aff;
+    --swiper-navigation-size: 24px;
+  }
+  
+  swiper-container::part(button-prev),
+  swiper-container::part(button-next) {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 8px;
+    border-radius: 50%;
+    backdrop-filter: blur(4px);
+  }
+  
+  swiper-container::part(bullet) {
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+  
+  swiper-container::part(bullet-active) {
+    background-color: var(--swiper-theme-color);
+  }
+</style> 
