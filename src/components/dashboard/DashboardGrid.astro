@@ -2,34 +2,35 @@
 // Import dashboard widgets
 import DateTime from "./widgets/DateTime.astro";
 import Weather from "./widgets/Weather.astro";
+import QuoteOfTheDay from "./widgets/QuoteOfTheDay.astro";
 import Placeholder from "../Placeholder.astro";
+import DashboardSlider from "./widgets/DashboardSlider.astro";
 ---
 
 <div class="h-screen w-screen p-4 bg-gray-100 dark:bg-gray-900">
   <div class="grid-container">
     <!-- Grid Start -->
-  <div class="grid-cell area-1">
-    <DateTime />
-  </div>
-  <div class="grid-cell area-2">
-    <Weather />
-  </div>
-  <div class="grid-cell area-3">
-    <Placeholder text="Quote of the Day Widget" />
-  </div>
+    <div class="grid-cell area-1">
+      <DateTime />
+    </div>
+    <div class="grid-cell area-2">
+      <Weather />
+    </div>
+    <div class="grid-cell area-3">
+      <QuoteOfTheDay />
+    </div>
 
-  <div class="grid-cell area-4">
-    <Placeholder text="Team & Company Updates" />
-  </div>
-  <div class="grid-cell area-5">
-    <Placeholder text="Everyday Office Tips" />
-  </div>
+    <div class="grid-cell area-4">
+      <Placeholder text="Team & Company Updates" />
+    </div>
+    <div class="grid-cell area-5">
+      <Placeholder text="Everyday Office Tips" />
+    </div>
 
-  <div class="grid-cell area-6">
-    <Placeholder text="Important Meetings / Stock Ticker / News" />
-  </div>
-  <!-- Grid End -->
-
+    <div class="grid-cell area-6">
+      <DashboardSlider />
+    </div>
+    <!-- Grid End -->
   </div>
 </div> 
 

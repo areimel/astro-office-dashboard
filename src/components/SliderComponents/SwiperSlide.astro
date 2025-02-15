@@ -1,0 +1,13 @@
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+---
+
+<swiper-slide class={className}>
+  <div class="h-full">
+    <slot />
+  </div>
+</swiper-slide> 
