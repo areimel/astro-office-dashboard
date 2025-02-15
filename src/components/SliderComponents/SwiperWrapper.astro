@@ -3,6 +3,8 @@ interface Props {
   direction?: 'horizontal' | 'vertical';
   loop?: boolean;
   autoplay?: boolean;
+  autoplayDelay?: number;
+  speed?: number;
   pagination?: boolean;
   navigation?: boolean;
   class?: string;
@@ -12,23 +14,26 @@ const {
   direction = 'horizontal',
   loop = false,
   autoplay = false,
+  autoplayDelay = 3000,
+  speed = 650,
   pagination = true,
-  navigation = true,
+  navigation = false,
   class: className = '',
 } = Astro.props;
+
+// Construct autoplay options object if autoplay is enabled
+//const autoplayAttr = autoplay ? `'{"delay": ${autoplayDelay}}'` : 'false';
 ---
 
-<script>
-  // Register Swiper custom elements
-  import { register } from 'swiper/element/bundle';
-  register();
-</script>
+
 
 <swiper-container
   class={`w-full h-full ${className}`}
   direction={direction}
   loop={loop ? 'true' : 'false'}
-  autoplay={autoplay ? 'true' : 'false'}
+  autoplay={autoplay}
+  speed={speed}
+  autoplay-delay={autoplayDelay}
   pagination={pagination ? 'true' : 'false'}
   navigation={navigation ? 'true' : 'false'}
 >

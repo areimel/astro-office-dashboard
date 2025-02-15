@@ -40,10 +40,11 @@ import DashboardSlider from "./widgets/DashboardSlider.astro";
   .grid-container {  
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
     gap: 10px;
     grid-auto-flow: row;
     grid-template-areas:
+      "area-1 area-2 area-3 area-3 area-3"
       "area-1 area-2 area-3 area-3 area-3"
       "area-4 area-4 area-4 area-6 area-6"
       "area-5 area-5 area-5 area-6 area-6";

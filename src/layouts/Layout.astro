@@ -55,6 +55,12 @@ const makeTitle = title
         },
       }}
     />
+
+    <script >
+      // Register Swiper custom elements
+      import { register } from 'swiper/element/bundle';
+      register();
+    </script>
   </head>
   <body class="min-h-screen overflow-hidden m-0 p-0">
     <slot />

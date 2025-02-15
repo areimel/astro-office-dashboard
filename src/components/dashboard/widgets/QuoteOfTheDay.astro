@@ -1,16 +1,34 @@
 ---
-// Fetch quote data during server-side rendering
-const response = await fetch('https://thequoteshub.com/api/');
-const { text, author } = await response.json();
+import SwiperWrapper from '../../SliderComponents/SwiperWrapper.astro';
+import SwiperSlide from '../../SliderComponents/SwiperSlide.astro';
+
+// Fetch multiple quotes during server-side rendering
+const quotes = await Promise.all([
+  fetch('https://thequoteshub.com/api/').then(res => res.json()),
+  fetch('https://thequoteshub.com/api/').then(res => res.json()),
+  fetch('https://thequoteshub.com/api/').then(res => res.json())
+]);
 ---
 
-<div class="h-full flex flex-col justify-center">
-  <blockquote class="space-y-4">
-    <p class="text-2xl font-serif text-gray-800 dark:text-gray-200 leading-relaxed">
-      "{text}"
-    </p>
-    <footer class="text-lg text-gray-600 dark:text-gray-400">
-      — {author}
-    </footer>
-  </blockquote>
-</div> 
+<SwiperWrapper
+  autoplay={true}
+  autoplayDelay={10000}
+  loop={true}
+  pagination={true}
+  class="h-full"
+>
+  {quotes.map(({ text, author }) => (
+    <SwiperSlide>
+      <div class="h-full flex flex-col justify-center">
+        <blockquote class="space-y-4">
+          <p class="text-2xl font-serif text-gray-800 dark:text-gray-200 leading-relaxed">
+            "{text}"
+          </p>
+          <footer class="text-lg text-gray-600 dark:text-gray-400">
+            — {author}
+          </footer>
+        </blockquote>
+      </div>
+    </SwiperSlide>
+  ))}
+</SwiperWrapper> 
