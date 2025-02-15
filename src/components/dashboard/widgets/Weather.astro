@@ -2,7 +2,7 @@
   <div id="weather-display" class="hidden flex-1 flex-col items-center justify-center space-y-2">
     <div class="flex items-center">
       <img id="weather-icon" src="" alt="Weather icon" class="w-16 h-16" />
-      <div class="text-4xl font-bold text-gray-900 dark:text-gray-100 ml-2">
+      <div class="text-4xl font-bold text-[var(--accent-color)] dark:text-[var(--accent-color)] ml-2">
         <span id="temperature"></span>°C
       </div>
     </div>
@@ -10,7 +10,7 @@
     <div id="location" class="text-sm text-gray-600 dark:text-gray-400"></div>
     <button
       id="change-location"
-      class="mt-2 text-sm text-blue-600 dark:text-blue-400 hover:underline"
+      class="mt-2 text-sm text-[var(--accent-color)] dark:text-[var(--accent-color)] hover:text-[var(--accent-color-dark)] dark:hover:text-[var(--accent-color-dark)] hover:underline"
     >
       Change location
     </button>
@@ -27,13 +27,13 @@
         name="zipcode"
         pattern="[0-9]{5}"
         required
-        class="block w-32 px-3 py-2 text-center border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+        class="block w-32 px-3 py-2 text-center border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent-color)] focus:border-[var(--accent-color)] dark:bg-gray-700 dark:border-gray-600 dark:text-white"
         placeholder="12345"
       />
     </div>
     <button
       type="submit"
-      class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:hover:bg-blue-800"
+      class="px-4 py-2 text-sm font-medium text-white bg-[var(--accent-color)] hover:bg-[var(--accent-color-dark)] rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--accent-color)] dark:hover:bg-[var(--accent-color-dark)]"
     >
       Get Weather
     </button>
