@@ -1,0 +1,119 @@
+<div class="flex flex-col h-full">
+  <div id="weather-display" class="hidden flex-1 flex-col items-center justify-center space-y-2">
+    <div class="flex items-center">
+      <img id="weather-icon" src="" alt="Weather icon" class="w-16 h-16" />
+      <div class="text-4xl font-bold text-gray-900 dark:text-gray-100 ml-2">
+        <span id="temperature"></span>°C
+      </div>
+    </div>
+    <div id="description" class="text-lg text-gray-700 dark:text-gray-300 capitalize"></div>
+    <div id="location" class="text-sm text-gray-600 dark:text-gray-400"></div>
+    <button
+      id="change-location"
+      class="mt-2 text-sm text-blue-600 dark:text-blue-400 hover:underline"
+    >
+      Change location
+    </button>
+  </div>
+
+  <form id="zip-form" class="flex-1 flex flex-col items-center justify-center space-y-4">
+    <div class="text-center space-y-2">
+      <label for="zipcode" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+        Enter your ZIP code for local weather
+      </label>
+      <input
+        type="text"
+        id="zipcode"
+        name="zipcode"
+        pattern="[0-9]{5}"
+        required
+        class="block w-32 px-3 py-2 text-center border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+        placeholder="12345"
+      />
+    </div>
+    <button
+      type="submit"
+      class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:hover:bg-blue-800"
+    >
+      Get Weather
+    </button>
+  </form>
+</div>
+
+<script>
+  // Note: You'll need to replace 'YOUR_API_KEY' with an actual OpenWeatherMap API key
+  const API_KEY = 'b56985b3321087d3526b3496bb6ce037';
+  const weatherDisplay = document.getElementById('weather-display');
+  const zipForm = document.getElementById('zip-form');
+  const changeLocationBtn = document.getElementById('change-location');
+
+  let savedZipCode = localStorage.getItem('weatherZipCode');
+  
+  if (savedZipCode) {
+    fetchWeather(savedZipCode);
+  }
+
+  zipForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const zipcode = (document.getElementById('zipcode') as HTMLInputElement).value;
+    await fetchWeather(zipcode);
+    localStorage.setItem('weatherZipCode', zipcode);
+  });
+
+  changeLocationBtn?.addEventListener('click', () => {
+    if (weatherDisplay && zipForm) {
+      weatherDisplay.classList.add('hidden');
+      zipForm.classList.remove('hidden');
+    }
+  });
+
+  async function fetchWeather(zipcode: string) {
+    try {
+      const response = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?zip=${zipcode},us&units=metric&appid=${API_KEY}`
+      );
+      
+      if (!response.ok) {
+        throw new Error('Weather data not found');
+      }
+
+      const data = await response.json();
+      
+      if (weatherDisplay && zipForm) {
+        updateWeatherDisplay(data);
+        weatherDisplay.classList.remove('hidden');
+        zipForm.classList.add('hidden');
+      }
+    } catch (error) {
+      alert('Error fetching weather data. Please try again.');
+      console.error('Weather fetch error:', error);
+    }
+  }
+
+  function updateWeatherDisplay(data: any) {
+    const iconElement = document.getElementById('weather-icon') as HTMLImageElement;
+    const temperatureElement = document.getElementById('temperature');
+    const descriptionElement = document.getElementById('description');
+    const locationElement = document.getElementById('location');
+
+    if (iconElement) {
+      iconElement.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+    }
+    if (temperatureElement) {
+      temperatureElement.textContent = Math.round(data.main.temp).toString();
+    }
+    if (descriptionElement) {
+      descriptionElement.textContent = data.weather[0].description;
+    }
+    if (locationElement) {
+      locationElement.textContent = data.name;
+    }
+  }
+
+  // Update weather every 5 minutes if we have a saved zip code
+  if (savedZipCode) {
+    setInterval(() => {
+      fetchWeather(savedZipCode);
+    }, 5 * 60 * 1000);
+  }
+</script> 

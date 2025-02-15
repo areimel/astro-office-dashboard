@@ -1,0 +1,54 @@
+---
+description: Project overview
+globs: src/*, *.astro
+---
+# Project Rules for Astro.js Office Dashboard
+This rule describes the specific project I am building.
+
+## Project Overview
+Develop a responsive, bento-style dashboard for office displays using Astro.js and Tailwind CSS. The dashboard will feature scalable widgets that adjust seamlessly across various screen sizes, from laptops to 4K TVs.
+
+## Key Principles
+- **Responsive Design:** Ensure the dashboard layout and widgets adapt fluidly to different screen dimensions using viewport units (`vw`, `vh`, `vmin`, `vmax`). The project should work on all screen sizes, including mobile, but the focus is on large monitors and TV screens.
+- **Performance Optimization:** Prioritize efficient loading and rendering to maintain smooth performance on all devices.
+- **Maintainability:** Write clean, modular, and well-documented code to facilitate future updates and scalability.
+
+## Code Style and Structure
+
+### Language and Framework
+- Utilize JavaScript (ES6+) and Astro.js for component-based architecture.
+
+### Styling
+- Employ Tailwind CSS for utility-first styling, ensuring consistency and responsiveness.
+
+### File Organization
+- /src/components/ # Reusable UI components (e.g., widgets) /src/layouts/ # Layout components defining the dashboard structure /src/pages/ # Page components, if multiple views are required /src/styles/ # Global and component-specific styles
+
+
+
+### Naming Conventions
+- **Files and Directories:** Use lowercase with hyphens (e.g., `weather-widget.astro`).
+- **Components:** PascalCase (e.g., `WeatherWidget`).
+- **Variables and Functions:** camelCase (e.g., `fetchData`).
+
+## Development Practices
+- **Functional Programming:** Favor pure functions and immutable data structures; avoid side effects.
+- **Modularization:** Break down the code into small, reusable components to enhance readability and reusability.
+- **Descriptive Naming:** Use clear and descriptive names for variables and functions (e.g., `isWidgetVisible`, `loadWeatherData`).
+
+## Styling Guidelines
+- **Utility-First Approach:** Leverage Tailwind CSS utilities for rapid styling and consistent design.
+- **Responsive Design:** Implement responsive utilities to ensure the dashboard adapts to various screen sizes.
+- **Custom Styles:** For unique components, extend Tailwind with custom styles as needed.
+
+## Performance Optimization
+- **Asset Management:** Optimize images and other assets for quick loading.
+- **Lazy Loading:** Implement lazy loading for widgets and components that are not immediately visible.
+- **Minification:** Ensure CSS and JavaScript files are minified in production builds.
+
+## Accessibility
+- **ARIA Labels:** Use ARIA attributes to improve accessibility for screen readers.
+- **Keyboard Navigation:** Ensure all interactive elements are accessible via keyboard.
+- **Contrast Ratios:** Maintain sufficient color contrast for text and UI elements.
+
+By adhering to these guidelines, the development process will be streamlined, resulting in a robust, scalable, and user-friendly dashboard application.

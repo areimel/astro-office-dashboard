@@ -1,0 +1,29 @@
+---
+// Import dashboard widgets
+import DateTime from "./widgets/DateTime.astro";
+import Weather from "./widgets/Weather.astro";
+import Placeholder from "../Placeholder.astro";
+---
+
+<div class="h-screen w-screen p-4 bg-gray-100 dark:bg-gray-900">
+  <div class="grid grid-cols-4 gap-4 h-full w-full max-w-[2560px] mx-auto">
+    <!-- Time and Weather row -->
+    <div class="col-span-1 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4">
+      <DateTime />
+    </div>
+    <div class="col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4">
+      <Placeholder text="Quote of the Day Widget" />
+    </div>
+    <div class="col-span-1 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4">
+      <Weather />
+    </div>
+    
+    <!-- Additional widget slots -->
+    <div class="col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4">
+      <Placeholder text="Future Widget 1" />
+    </div>
+    <div class="col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4">
+      <Placeholder text="Future Widget 2" />
+    </div>
+  </div>
+</div> 
