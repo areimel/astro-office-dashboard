@@ -1,0 +1,28 @@
+---
+interface Props {
+  ariaLabel: string;
+  class?: string;
+  floatingLabel?: string;
+  [x: string]: any;
+}
+
+const { ariaLabel, class: className, floatingLabel, ...rest } = Astro.props;
+---
+
+<div class="relative inline-flex items-center gap-2">
+  <button
+    class:list={[
+      "p-2 rounded-full bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 hover:bg-gray-400 dark:hover:bg-gray-600 border-2 border-gray-800 dark:border-gray-300 transition-colors duration-200",
+      className
+    ]}
+    aria-label={ariaLabel}
+    {...rest}
+  >
+    <slot />
+  </button>
+  {floatingLabel && (
+    <span class="text-gray-700 dark:text-gray-200 font-medium text-sm px-4 py-2 bg-gray-200 dark:bg-gray-800 rounded-lg shadow-sm dark:shadow-gray-900 whitespace-nowrap">
+      {floatingLabel}
+    </span>
+  )}
+</div>

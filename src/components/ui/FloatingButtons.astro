@@ -1,0 +1,61 @@
+---
+import DarkModeToggle from "./DarkModeToggle.astro";
+import AccentColorPicker from "./AccentColorPicker.astro";
+import SettingsButton from "./settingsButton.astro";
+import { Icon } from "astro-icon/components";
+---
+
+<div class="fixed bottom-6 left-5">
+  <!-- Container for sliding buttons -->
+  <div id="settings-buttons" class="absolute bottom-[calc(100%+0.5rem)] left-0 flex flex-col gap-2 transition-all duration-300 translate-y-full opacity-0 pointer-events-none">
+    <DarkModeToggle floatingLabel="Dark Mode" />
+    <AccentColorPicker floatingLabel="Accent Color" />
+    <!-- Additional buttons can be added here -->
+    <slot />
+  </div>
+
+  <!-- Settings toggle button (stays fixed) -->
+  <SettingsButton
+    id="settings-toggle"
+    ariaLabel="Toggle Settings"
+    aria-expanded="false"
+    class="relative z-10"
+  >
+    <Icon name="uil:setting" class="h-6 w-6 transition-transform duration-300" />
+  </SettingsButton>
+</div>
+
+<script>
+  // Get the toggle button and buttons container
+  const toggleButton = document.getElementById('settings-toggle');
+  const buttonsContainer = document.getElementById('settings-buttons');
+  const settingsIcon = toggleButton?.querySelector('.h-6');
+
+  // Add click event listener to toggle button
+  toggleButton?.addEventListener('click', () => {
+    // Toggle the expanded state
+    const isExpanded = toggleButton.getAttribute('aria-expanded') === 'true';
+    
+    if (!isExpanded) {
+      // Show and slide up the buttons
+      buttonsContainer?.style.setProperty('transform', 'translateY(0)');
+      buttonsContainer?.classList.remove('opacity-0', 'pointer-events-none');
+      settingsIcon?.classList.add('rotate-180');
+    } else {
+      // Hide and slide down the buttons
+      buttonsContainer?.style.setProperty('transform', 'translateY(100%)');
+      buttonsContainer?.classList.add('opacity-0', 'pointer-events-none');
+      settingsIcon?.classList.remove('rotate-180');
+    }
+    
+    // Update the aria-expanded attribute
+    toggleButton.setAttribute('aria-expanded', (!isExpanded).toString());
+  });
+</script>
+
+<style>
+  /* Add any additional styling for the floating buttons container */
+  .fixed {
+    z-index: 50; /* Ensure buttons stay above other content */
+  }
+</style> 
