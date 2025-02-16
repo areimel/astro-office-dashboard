@@ -1,6 +1,7 @@
 ---
 import DarkModeToggle from "./DarkModeToggle.astro";
 import AccentColorPicker from "./AccentColorPicker.astro";
+import FullScreenToggle from "./FullScreenToggle.astro";
 import SettingsButton from "./settingsButton.astro";
 import { Icon } from "astro-icon/components";
 ---
@@ -10,6 +11,7 @@ import { Icon } from "astro-icon/components";
   <div id="settings-buttons" class="absolute bottom-[calc(100%+0.5rem)] left-0 flex flex-col gap-2 transition-all duration-300 translate-y-full opacity-0 pointer-events-none">
     <DarkModeToggle floatingLabel="Dark Mode" />
     <AccentColorPicker floatingLabel="Accent Color" />
+    <FullScreenToggle floatingLabel="Fullscreen Toggle" />
     <!-- Additional buttons can be added here -->
     <slot />
   </div>
@@ -21,7 +23,8 @@ import { Icon } from "astro-icon/components";
     aria-expanded="false"
     class="relative z-10"
   >
-    <Icon name="uil:setting" class="h-6 w-6 transition-transform duration-300" />
+    <Icon name="uil:setting" class="h-6 w-6 transition-transform duration-300 settings-icon" />
+    <Icon name="uil:multiply" class="h-6 w-6 absolute flex items-center justify-center transition-opacity duration-300 opacity-0 close-icon flex items-center justify-center" style="left: 50%; top: 50%; transform: translate(-50%, -50%);" />
   </SettingsButton>
 </div>
 
@@ -29,7 +32,8 @@ import { Icon } from "astro-icon/components";
   // Get the toggle button and buttons container
   const toggleButton = document.getElementById('settings-toggle');
   const buttonsContainer = document.getElementById('settings-buttons');
-  const settingsIcon = toggleButton?.querySelector('.h-6');
+  const settingsIcon = toggleButton?.querySelector('.settings-icon');
+  const closeIcon = toggleButton?.querySelector('.close-icon');
 
   // Add click event listener to toggle button
   toggleButton?.addEventListener('click', () => {
@@ -40,12 +44,14 @@ import { Icon } from "astro-icon/components";
       // Show and slide up the buttons
       buttonsContainer?.style.setProperty('transform', 'translateY(0)');
       buttonsContainer?.classList.remove('opacity-0', 'pointer-events-none');
-      settingsIcon?.classList.add('rotate-180');
+      settingsIcon?.classList.add('opacity-0');
+      closeIcon?.classList.remove('opacity-0');
     } else {
       // Hide and slide down the buttons
       buttonsContainer?.style.setProperty('transform', 'translateY(100%)');
       buttonsContainer?.classList.add('opacity-0', 'pointer-events-none');
-      settingsIcon?.classList.remove('rotate-180');
+      settingsIcon?.classList.remove('opacity-0');
+      closeIcon?.classList.add('opacity-0');
     }
     
     // Update the aria-expanded attribute
