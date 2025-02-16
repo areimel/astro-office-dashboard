@@ -37,6 +37,38 @@ import { Icon } from "astro-icon/components";
   const settingsIcon = toggleButton?.querySelector('.settings-icon');
   const closeIcon = toggleButton?.querySelector('.close-icon');
 
+  // Timer variable to track auto-close
+  let autoCloseTimer: number | undefined;
+
+  // Function to close the settings menu
+  function closeSettingsMenu() {
+    if (toggleButton && buttonsContainer) {
+      buttonsContainer.style.setProperty('transform', 'translateY(100%)');
+      buttonsContainer.classList.add('opacity-0', 'pointer-events-none');
+      settingsIcon?.classList.remove('opacity-0');
+      closeIcon?.classList.add('opacity-0');
+      toggleButton.setAttribute('aria-expanded', 'false');
+    }
+    // Clear the timer when menu is closed
+    clearAutoCloseTimer();
+  }
+
+  // Function to start the auto-close timer
+  function startAutoCloseTimer() {
+    clearAutoCloseTimer(); // Clear any existing timer
+    autoCloseTimer = window.setTimeout(() => {
+      closeSettingsMenu();
+    }, 120000); // 2 minutes = 120000 milliseconds
+  }
+
+  // Function to clear the auto-close timer
+  function clearAutoCloseTimer() {
+    if (autoCloseTimer) {
+      window.clearTimeout(autoCloseTimer);
+      autoCloseTimer = undefined;
+    }
+  }
+
   // Add click event listener to toggle button
   toggleButton?.addEventListener('click', () => {
     // Toggle the expanded state
@@ -48,17 +80,23 @@ import { Icon } from "astro-icon/components";
       buttonsContainer?.classList.remove('opacity-0', 'pointer-events-none');
       settingsIcon?.classList.add('opacity-0');
       closeIcon?.classList.remove('opacity-0');
+      // Start the auto-close timer when menu is opened
+      startAutoCloseTimer();
     } else {
       // Hide and slide down the buttons
-      buttonsContainer?.style.setProperty('transform', 'translateY(100%)');
-      buttonsContainer?.classList.add('opacity-0', 'pointer-events-none');
-      settingsIcon?.classList.remove('opacity-0');
-      closeIcon?.classList.add('opacity-0');
+      closeSettingsMenu();
     }
     
     // Update the aria-expanded attribute
     toggleButton.setAttribute('aria-expanded', (!isExpanded).toString());
   });
+
+  // Reset timer when user interacts with the menu
+  //buttonsContainer?.addEventListener('mouseover', startAutoCloseTimer); // Uncomment to enable auto-close on mouseover
+  buttonsContainer?.addEventListener('click', startAutoCloseTimer);
+
+  // Clean up timer when page is unloaded
+  window.addEventListener('unload', clearAutoCloseTimer);
 </script>
 
 <style>
