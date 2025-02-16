@@ -1,0 +1,62 @@
+---
+import SettingsButton from "./settingsButton.astro";
+import { Icon } from "astro-icon/components";
+
+interface Props {
+  floatingLabel?: string;
+}
+
+const { floatingLabel } = Astro.props;
+---
+<div class="relative">
+  <SettingsButton
+    id="fullscreen-toggle"
+    ariaLabel="Toggle Fullscreen"
+    floatingLabel={floatingLabel}
+  >
+    <!-- Expand icon (shown when not in fullscreen) -->
+    <Icon 
+      name="heroicons:arrows-pointing-out" 
+      class="h-6 w-6 block fullscreen-off" 
+    />
+    <!-- Compress icon (shown when in fullscreen) -->
+    <Icon 
+      name="heroicons:arrows-pointing-in" 
+      class="h-6 w-6 hidden fullscreen-on" 
+    />
+  </SettingsButton>
+</div>
+<script>
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      // Enter fullscreen
+      document.documentElement.requestFullscreen().catch(err => {
+        console.error(`Error attempting to enable fullscreen: ${err.message}`);
+      });
+    } else {
+      // Exit fullscreen
+      document.exitFullscreen();
+    }
+  }
+
+  function updateFullscreenIcons(isFullscreen: boolean) {
+    const expandIcon = document.querySelector('.fullscreen-off');
+    const compressIcon = document.querySelector('.fullscreen-on');
+    
+    if (isFullscreen) {
+      expandIcon?.classList.add('hidden');
+      compressIcon?.classList.remove('hidden');
+    } else {
+      expandIcon?.classList.remove('hidden');
+      compressIcon?.classList.add('hidden');
+    }
+  }
+
+  // Add click event listener to toggle button
+  document.getElementById('fullscreen-toggle')?.addEventListener('click', toggleFullscreen);
+
+  // Listen for fullscreen changes
+  document.addEventListener('fullscreenchange', () => {
+    updateFullscreenIcons(!!document.fullscreenElement);
+  });
+</script> 
