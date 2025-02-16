@@ -1,0 +1,51 @@
+---
+import AnimatedGradientBackground from "./AnimatedGradientBackground.astro";
+import PlainBackground from "./PlainBackground.astro";
+---
+
+<div class="background-wrapper fixed inset-0">
+  <div class="background-container animated-gradient">
+    <AnimatedGradientBackground />
+  </div>
+  <div class="background-container plain-gradient">
+    <PlainBackground />
+  </div>
+</div>
+
+<style>
+  .background-wrapper {
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .background-container {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    display: none;
+  }
+
+  /* Show animated gradient background by default */
+  html[data-background="animated-gradient"] .background-container.animated-gradient {
+    opacity: 1;
+    display: block;
+  }
+
+  html[data-background="plain-gradient"] .background-container.plain-gradient {
+    opacity: 1;
+    display: block;
+  }
+</style>
+
+<script>
+  // Initialize background from localStorage on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    const savedBackground = localStorage.getItem('selectedBackground');
+    if (savedBackground) {
+      document.documentElement.setAttribute('data-background', savedBackground);
+    } else {
+      document.documentElement.setAttribute('data-background', 'animated-gradient');
+    }
+  });
+</script> 

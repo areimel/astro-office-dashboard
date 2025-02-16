@@ -1,0 +1,40 @@
+---
+// No props needed for this simple background
+---
+
+<div id="plain-background" class="background-container fixed inset-0 z-1">
+  <div class="gradient-bg"></div>
+</div>
+
+<style>
+  .background-container {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .gradient-bg {
+    position: absolute;
+    inset: 0;
+    /* Light mode gradient by default */
+    background: linear-gradient(
+      135deg,
+      rgb(247, 249, 255) 0%,
+      rgb(229, 237, 255) 35%,
+      rgb(239, 244, 255) 100%
+    );
+    transition: background 0.3s ease-in-out;
+  }
+
+  /* Dark mode gradient */
+  @media (prefers-color-scheme: dark) {
+    .gradient-bg {
+      background: linear-gradient(
+        135deg,
+        rgb(17, 24, 39) 0%,
+        rgb(29, 35, 48) 35%,
+        rgb(19, 26, 41) 100%
+      );
+    }
+  }
+</style> 

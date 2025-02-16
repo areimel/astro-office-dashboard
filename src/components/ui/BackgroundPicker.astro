@@ -1,0 +1,122 @@
+---
+import SettingsButton from "./settingsButton.astro";
+import { Icon } from "astro-icon/components";
+
+interface Props {
+  floatingLabel?: string;
+}
+
+const { floatingLabel } = Astro.props;
+
+const backgrounds = [
+  { name: 'animated-gradient', label: 'Animated Gradient', icon: 'ph:wave-sine-duotone' },
+  { name: 'plain-gradient', label: 'Plain Gradient', icon: 'ph:gradient-duotone' },
+];
+---
+
+<div class="relative">
+  <SettingsButton
+    id="background-toggle"
+    ariaLabel="Change Background"
+    aria-expanded="false"
+    floatingLabel={floatingLabel}
+  >
+    <Icon name="ph:app-window-duotone" class="h-6 w-6" />
+  </SettingsButton>
+  
+  <!-- Background picker dropdown -->
+  <div id="background-picker-dropdown" class="hidden absolute bottom-full left-0 mb-2 p-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-300 dark:border-gray-600 z-10 w-48">
+    <div class="flex justify-between items-center mb-2 pb-2 border-b border-gray-200 dark:border-gray-700">
+      <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Select Background</span>
+      <button
+        id="close-background-picker"
+        class="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+        aria-label="Close background picker"
+      >
+        <Icon name="uil:multiply" class="h-4 w-4" />
+      </button>
+    </div>
+    <div class="flex flex-col gap-2">
+      {backgrounds.map(bg => (
+        <button
+          class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 background-option"
+          data-background={bg.name}
+          aria-label={`Select ${bg.label} background`}
+        >
+          <Icon name={bg.icon} class="h-5 w-5" />
+          <span class="text-sm text-gray-700 dark:text-gray-300">{bg.label}</span>
+        </button>
+      ))}
+    </div>
+  </div>
+</div>
+
+<script>
+  // Function to set background
+  function setBackground(backgroundName: string) {
+    document.documentElement.setAttribute('data-background', backgroundName);
+    localStorage.setItem('selectedBackground', backgroundName);
+  }
+
+  // Function to toggle background picker visibility
+  function toggleBackgroundPicker() {
+    const dropdown = document.getElementById('background-picker-dropdown');
+    const toggleButton = document.getElementById('background-toggle');
+    const isVisible = dropdown?.classList.toggle('hidden');
+    toggleButton?.setAttribute('aria-expanded', (!isVisible).toString());
+  }
+
+  // Function to close background picker
+  function closeBackgroundPicker() {
+    const dropdown = document.getElementById('background-picker-dropdown');
+    const toggleButton = document.getElementById('background-toggle');
+    dropdown?.classList.add('hidden');
+    toggleButton?.setAttribute('aria-expanded', 'false');
+  }
+
+  // Initialize background from localStorage or default
+  function initBackground() {
+    const savedBackground = localStorage.getItem('selectedBackground');
+    if (savedBackground) {
+      setBackground(savedBackground);
+    } else {
+      // Default to animated gradient
+      setBackground('animated-gradient');
+    }
+  }
+
+  // Add click event listeners
+  document.getElementById('background-toggle')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleBackgroundPicker();
+  });
+
+  document.getElementById('close-background-picker')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeBackgroundPicker();
+  });
+
+  // Close picker when clicking outside
+  document.addEventListener('click', (e) => {
+    const dropdown = document.getElementById('background-picker-dropdown');
+    const toggleButton = document.getElementById('background-toggle');
+    if (!dropdown?.contains(e.target as Node) && !toggleButton?.contains(e.target as Node)) {
+      closeBackgroundPicker();
+    }
+  });
+
+  // Add click event listeners to background options
+  document.querySelectorAll('.background-option').forEach(button => {
+    button.addEventListener('click', (e) => {
+      const button = e.currentTarget as HTMLButtonElement;
+      const backgroundName = button.dataset.background;
+      if (backgroundName) {
+        setBackground(backgroundName);
+        closeBackgroundPicker();
+      }
+    });
+  });
+
+  // Initialize background on page load
+  document.addEventListener('DOMContentLoaded', initBackground);
+</script> 

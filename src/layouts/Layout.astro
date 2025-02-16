@@ -3,10 +3,9 @@ import { SEO } from "astro-seo";
 import Footer from "@components/footer.astro";
 import Navbar from "@components/navbar/navbar.astro";
 import FloatingButtons from "@components/ui/FloatingButtons.astro";
+import BackgroundWrapper from "@components/BackgroundComponents/BackgroundWrapper.astro";
 import "@fontsource-variable/inter/index.css";
 import '@fontsource-variable/bricolage-grotesque';
-
-
 
 export interface Props {
   title: string;
@@ -27,7 +26,7 @@ const makeTitle = title
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-background="animated-gradient">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
@@ -64,7 +63,10 @@ const makeTitle = title
     </script>
   </head>
   <body class="min-h-screen overflow-hidden m-0 p-0">
-    <slot />
+    <BackgroundWrapper />
+    <div class="relative z-20">
+      <slot />
+    </div>
     <FloatingButtons />
     <!--  <Footer /> -->
     <style is:global>
@@ -87,5 +89,15 @@ const makeTitle = title
         overflow: hidden;
       }
     </style>
+
+    <script>
+      // Initialize background from localStorage on page load
+      document.addEventListener('DOMContentLoaded', () => {
+        const savedBackground = localStorage.getItem('selectedBackground');
+        if (savedBackground) {
+          document.documentElement.setAttribute('data-background', savedBackground);
+        }
+      });
+    </script>
   </body>
 </html>

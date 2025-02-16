@@ -2,6 +2,7 @@
 import DarkModeToggle from "./DarkModeToggle.astro";
 import AccentColorPicker from "./AccentColorPicker.astro";
 import FullScreenToggle from "./FullScreenToggle.astro";
+import BackgroundPicker from "./BackgroundPicker.astro";
 import SettingsButton from "./settingsButton.astro";
 import { Icon } from "astro-icon/components";
 ---
@@ -11,6 +12,7 @@ import { Icon } from "astro-icon/components";
   <div id="settings-buttons" class="absolute bottom-[calc(100%+0.5rem)] left-0 flex flex-col gap-2 transition-all duration-300 translate-y-full opacity-0 pointer-events-none">
     <DarkModeToggle floatingLabel="Dark Mode" />
     <AccentColorPicker floatingLabel="Accent Color" />
+    <BackgroundPicker floatingLabel="Background Style" />
     <FullScreenToggle floatingLabel="Fullscreen Toggle" />
     <!-- Additional buttons can be added here -->
     <slot />
