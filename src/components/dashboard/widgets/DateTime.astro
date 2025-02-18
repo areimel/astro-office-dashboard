@@ -1,27 +1,63 @@
 <div class="flex flex-col items-center justify-center h-full space-y-2">
-  <div id="date" class="text-lg font-medium text-gray-700 dark:text-gray-300"></div>
-  <div id="clock" class="text-3xl font-bold text-[var(--accent-color)] dark:text-[var(--accent-color)]"></div>
+  <div id="date" class="font-medium text-gray-700 dark:text-gray-300">Monday, February 17</div>
+  <div id="clock" class="font-bold text-[var(--accent-color)] dark:text-[var(--accent-color)]">00:00 AM</div>
+  <div id="message" class="text-sm text-gray-700 dark:text-gray-300">Good Morning!</div>
 </div>
 
 <script>
-  function updateDateTime() {
-    const now = new Date();
-    
-    // Update date in text format
-    const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    const dateText = now.toLocaleDateString('en-US', dateOptions);
-    document.getElementById('date').textContent = dateText;
-    
-    // Update time in HH:mm format
-    const timeText = now.toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
-      minute: '2-digit',
-      hour12: false 
-    });
-    document.getElementById('clock').textContent = timeText;
-  }
+  (function() {
+    function updateDateTime() {
+      const now = new Date();
+      
+      // Update date in text format
+      const dateOptions: Intl.DateTimeFormatOptions = { weekday: 'long', month: 'long', day: 'numeric' };
+      const dateText = now.toLocaleDateString('en-US', dateOptions);
+      document.getElementById('date')!.textContent = dateText;
+      
+      // Update time in HH:mm format
+      const timeText = now.toLocaleTimeString('en-US', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        hour12: true 
+      });
+      document.getElementById('clock')!.textContent = timeText;
+      
+      // Dynamically update message based on current time
+      const currentHour = now.getHours();
+      let message = 'Good Morning!';
+      if (currentHour < 12) {
+        message = 'Good Morning!';
+      } else if (currentHour < 18) {
+        message = 'Good Afternoon!';
+      } else {
+        message = 'Good Evening!';
+      }
+      document.getElementById('message')!.textContent = message;
+    }
 
-  // Update immediately and then every second
-  updateDateTime();
-  setInterval(updateDateTime, 1000);
+    // Update immediately and then every second
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
+  })();
 </script> 
+
+<style>
+  #date{
+    font-size: 2.5vw;
+    text-align: center;
+    text-wrap: balance;
+    line-height: 1;
+    margin-bottom: 0em;
+  }
+  #clock{
+    font-size: 3vw;
+    line-height: 1;
+    margin-bottom: 0em;
+  }
+  #message{
+    font-size: 1.5vw;
+    text-align: center;
+    text-wrap: balance;
+    line-height: 1;
+  }
+</style>

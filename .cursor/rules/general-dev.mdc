@@ -1,5 +1,9 @@
 ---
 description: General frontend dev
+globs:  src/*
+---
+---
+description: General frontend dev
 globs: src/*
 ---
 
