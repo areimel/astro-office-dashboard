@@ -9,8 +9,16 @@ interface Props {
 const { floatingLabel } = Astro.props;
 
 const backgrounds = [
-  { name: 'animated-gradient', label: 'Animated Gradient', icon: 'ph:wave-sine-duotone' },
-  { name: 'plain-gradient', label: 'Plain Gradient', icon: 'ph:gradient-duotone' },
+  { 
+    name: 'animated-gradient', 
+    label: 'Animated Background',
+    colors: ['rgb(108, 0, 162)', 'rgb(0, 17, 82)']
+  },
+  { 
+    name: 'plain-gradient', 
+    label: 'Plain Background',
+    colors: ['rgb(247, 249, 255)', 'rgb(229, 237, 255)']
+  }
 ];
 ---
 
@@ -39,11 +47,14 @@ const backgrounds = [
     <div class="flex flex-col gap-2">
       {backgrounds.map(bg => (
         <button
-          class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 background-option"
+          class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 background-option"
           data-background={bg.name}
           aria-label={`Select ${bg.label} background`}
         >
-          <Icon name={bg.icon} class="h-5 w-5" />
+          <div 
+            class="w-8 h-8 rounded-full border-2 border-gray-300 dark:border-gray-600 hover:scale-110 transition-transform duration-200"
+            style={`background: linear-gradient(135deg, ${bg.colors[0]}, ${bg.colors[1]})`}
+          ></div>
           <span class="text-sm text-gray-700 dark:text-gray-300">{bg.label}</span>
         </button>
       ))}

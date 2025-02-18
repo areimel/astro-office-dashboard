@@ -26,15 +26,12 @@
     transition: background 0.3s ease-in-out;
   }
 
-  /* Dark mode gradient */
-  @media (prefers-color-scheme: dark) {
-    .gradient-bg {
-      background: linear-gradient(
-        135deg,
-        rgb(17, 24, 39) 0%,
-        rgb(29, 35, 48) 35%,
-        rgb(19, 26, 41) 100%
-      );
-    }
+  :global(.dark) .gradient-bg {
+    background: linear-gradient(
+      135deg,
+      #222222 0%,
+      #5a5a5a 35%,
+      #2a2a2a 100%
+    );
   }
 </style> 

@@ -1,24 +1,29 @@
-<div class="flex flex-col h-full">
-  <div id="weather-display" class="hidden flex-1 flex-col items-center justify-center space-y-2">
+---
+import { Icon } from 'astro-icon/components'
+---
+
+<div class="flex flex-col items-center justify-center h-full">
+  <div id="weather-display" class="hidden flex-col items-center justify-center space-y-4">
     <div class="flex items-center">
-      <img id="weather-icon" src="" alt="Weather icon" class="w-16 h-16" />
-      <div class="text-4xl font-bold text-[var(--accent-color)] dark:text-[var(--accent-color)] ml-2">
+      <Icon id="weather-icon" name="carbon:partly-cloudy" class="w-24 h-24 text-[var(--accent-color)]" />
+      <div class="text-6xl font-bold text-[var(--accent-color)] dark:text-[var(--accent-color)] ml-4">
         <span id="temperature"></span>°C
       </div>
     </div>
-    <div id="description" class="text-lg text-gray-700 dark:text-gray-300 capitalize"></div>
-    <div id="location" class="text-sm text-gray-600 dark:text-gray-400"></div>
+    <div id="description" class="text-2xl text-gray-700 dark:text-gray-300 capitalize"></div>
+    <div id="location" class="text-lg text-gray-600 dark:text-gray-400"></div>
     <button
       id="change-location"
-      class="mt-2 text-sm text-[var(--accent-color)] dark:text-[var(--accent-color)] hover:text-[var(--accent-color-dark)] dark:hover:text-[var(--accent-color-dark)] hover:underline"
+      class="mt-2 text-base text-[var(--accent-color)] dark:text-[var(--accent-color)] hover:text-[var(--accent-color-dark)] dark:hover:text-[var(--accent-color-dark)] hover:underline flex items-center gap-2"
     >
+      <Icon name="carbon:location" class="w-5 h-5" />
       Change location
     </button>
   </div>
 
   <form id="zip-form" class="flex-1 flex flex-col items-center justify-center space-y-4">
     <div class="text-center space-y-2">
-      <label for="zipcode" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+      <label for="zipcode" class="block text-lg font-medium text-gray-700 dark:text-gray-300">
         Enter your ZIP code for local weather
       </label>
       <input
@@ -27,14 +32,15 @@
         name="zipcode"
         pattern="[0-9]{5}"
         required
-        class="block w-32 px-3 py-2 text-center border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent-color)] focus:border-[var(--accent-color)] dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+        class="block w-40 px-4 py-3 text-center text-xl border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent-color)] focus:border-[var(--accent-color)] dark:bg-gray-700 dark:border-gray-600 dark:text-white"
         placeholder="12345"
       />
     </div>
     <button
       type="submit"
-      class="px-4 py-2 text-sm font-medium text-white bg-[var(--accent-color)] hover:bg-[var(--accent-color-dark)] rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--accent-color)] dark:hover:bg-[var(--accent-color-dark)]"
+      class="px-6 py-3 text-base font-medium text-white bg-[var(--accent-color)] hover:bg-[var(--accent-color-dark)] rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--accent-color)] dark:hover:bg-[var(--accent-color-dark)] flex items-center gap-2"
     >
+      <Icon name="carbon:cloud-download" class="w-5 h-5" />
       Get Weather
     </button>
   </form>
@@ -91,13 +97,36 @@
   }
 
   function updateWeatherDisplay(data: any) {
-    const iconElement = document.getElementById('weather-icon') as HTMLImageElement;
+    const iconElement = document.getElementById('weather-icon');
     const temperatureElement = document.getElementById('temperature');
     const descriptionElement = document.getElementById('description');
     const locationElement = document.getElementById('location');
 
+    // Map OpenWeather conditions to Carbon icons
+    const weatherIconMap: { [key: string]: string } = {
+      '01d': 'carbon:sunny',
+      '01n': 'carbon:moon',
+      '02d': 'carbon:partly-cloudy',
+      '02n': 'carbon:partly-cloudy',
+      '03d': 'carbon:cloudy',
+      '03n': 'carbon:cloudy',
+      '04d': 'carbon:cloudy',
+      '04n': 'carbon:cloudy',
+      '09d': 'carbon:rain-heavy',
+      '09n': 'carbon:rain-heavy',
+      '10d': 'carbon:rain',
+      '10n': 'carbon:rain',
+      '11d': 'carbon:lightning',
+      '11n': 'carbon:lightning',
+      '13d': 'carbon:snow',
+      '13n': 'carbon:snow',
+      '50d': 'carbon:fog',
+      '50n': 'carbon:fog'
+    };
+
     if (iconElement) {
-      iconElement.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+      const iconName = weatherIconMap[data.weather[0].icon] || 'carbon:partly-cloudy';
+      iconElement.setAttribute('name', iconName);
     }
     if (temperatureElement) {
       temperatureElement.textContent = Math.round(data.main.temp).toString();
