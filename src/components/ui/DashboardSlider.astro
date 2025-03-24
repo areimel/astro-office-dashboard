@@ -1,7 +1,7 @@
 ---
-import SwiperWrapper from '../../SliderComponents/SwiperWrapper.astro';
-import SwiperSlide from '../../SliderComponents/SwiperSlide.astro';
-import TestComponent1 from '../../SliderComponents/TestComponent1.astro';
+import SwiperWrapper from '@components/SliderComponents/SwiperWrapper.astro';
+import SwiperSlide from '@components/SliderComponents/SwiperSlide.astro';
+
 
 type SlideItem = {
   time?: string;
@@ -49,14 +49,8 @@ const slides: Slide[] = [
 <SwiperWrapper
   autoplay={true}
   loop={true}
+  autoplayDelay={60000}
   class="h-full"
 >
-  {slides.map((slide) => (
-    <SwiperSlide>
-      <TestComponent1 
-        title={slide.title}
-        items={slide.content}
-      />
-    </SwiperSlide>
-  ))}
+  <slot />
 </SwiperWrapper> 
