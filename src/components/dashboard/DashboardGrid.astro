@@ -4,7 +4,10 @@ import DateTime from "./widgets/DateTime.astro";
 import Weather from "./widgets/Weather.astro";
 import QuoteOfTheDay from "./widgets/QuoteOfTheDay.astro";
 import Placeholder from "../Placeholder.astro";
-import DashboardSlider from "./widgets/DashboardSlider.astro";
+import DashboardSlider from "@components/ui/DashboardSlider.astro";
+import NewsHeadlines from "./widgets/NewsHeadlines.astro";
+import SwiperSlide from "@components/SliderComponents/SwiperSlide.astro"
+import StockMarketFeed from "./widgets/StockMarketFeed.astro";
 ---
 
 <div class="h-screen w-screen p-4 ">
@@ -22,7 +25,17 @@ import DashboardSlider from "./widgets/DashboardSlider.astro";
     </div>
 
     <div class="grid-cell area-4">
-      <DashboardSlider />
+      <DashboardSlider>
+        <SwiperSlide>
+          <NewsHeadlines />
+        </SwiperSlide>
+        <SwiperSlide>
+          <StockMarketFeed />
+        </SwiperSlide>
+        <SwiperSlide>
+          TEST SLIDE 3
+        </SwiperSlide>
+      </DashboardSlider>
     </div>
     <div class="grid-cell area-5">
       <Placeholder text="Team & Company Updates" />

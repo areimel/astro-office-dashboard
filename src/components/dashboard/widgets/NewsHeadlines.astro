@@ -1,0 +1,221 @@
+---
+import { Icon } from 'astro-icon/components'
+import AutoScrollContainer from '../../ui/AutoScrollContainer.astro';
+
+// Try to get API key from environment variable
+const envApiKey = import.meta.env.NEWS_API_KEY || '';
+---
+
+<div class="flex flex-col h-full overflow-hidden">
+  <div id="news-display" class="hidden flex flex-col h-full">
+    
+    <div class="flex items-center justify-between border-b-2 border-[var(--accent-color)] pb-2 mb-2">
+      <div class="flex items-center">
+        <Icon name="mdi:newspaper-variant-outline" class="w-8 h-8 text-[var(--accent-color)]" />
+        <h2 class="text-2xl font-bold text-[var(--accent-color)] ml-2">Top Headlines</h2>
+        <span class="text-xs text-gray-500 ml-2 pl-2 border-l-2 border-gray-500">provided by The Guardian</span>
+      </div>
+
+      <button
+        id="refresh-news"
+        class="text-base text-[var(--accent-color)] hover:text-[var(--accent-color-dark)] hover:underline flex items-center gap-2"
+      >
+        <Icon name="mdi:newspaper-variant-outline" class="w-5 h-5" />
+        Refresh Headlines
+      </button>
+    </div>
+    
+    <AutoScrollContainer class="flex-1">
+      <div id="headlines-container" class="space-y-4">
+        <!-- Headlines will be displayed here -->
+      </div>
+    </AutoScrollContainer>
+
+    
+  </div>
+
+  <form id="api-key-form" class="flex-1 flex flex-col items-center justify-center space-y-4">
+    <div class="text-center space-y-2">
+      <label for="guardian-api-key" class="block text-lg font-medium text-gray-700 dark:text-gray-300">
+        Enter your Guardian API key
+      </label>
+      <input
+        type="text"
+        id="guardian-api-key"
+        name="guardian-api-key"
+        required
+        class="block w-64 px-4 py-3 text-center border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent-color)] focus:border-[var(--accent-color)] dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+        placeholder="Your API Key"
+      />
+    </div>
+    <button
+      type="submit"
+      class="px-6 py-3 text-base font-medium text-white bg-[var(--accent-color)] hover:bg-[var(--accent-color-dark)] rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--accent-color)] dark:hover:bg-[var(--accent-color-dark)] flex items-center gap-2"
+    >
+      <Icon name="mdi:refresh" class="w-5 h-5" />
+      Load Headlines
+    </button>
+  </form>
+</div>
+
+<script define:vars={{ envApiKey }}>
+  const newsDisplay = document.getElementById('news-display');
+  const apiKeyForm = document.getElementById('api-key-form');
+  const refreshNewsBtn = document.getElementById('refresh-news');
+  const headlinesContainer = document.getElementById('headlines-container');
+
+  const GUARDIAN_API_ENDPOINT = 'https://content.guardianapis.com/search';
+  const ITEMS_TO_DISPLAY = 10;
+  
+  // Define search terms with operators for Guardian API
+  // Format: { "term": "operator" }
+  // Operators: "AND", "OR", "NOT"
+  // This configuration focuses on business/tech news while excluding controversial topics
+  const SEARCH_TERMS = {
+    "business": "AND",     // Must include business-related content
+    "technology": "OR",    // Include tech news
+    "innovation": "OR",    // Include innovation stories
+    "marketing": "OR",     // Include marketing content
+    "startup": "OR",       // Include startup news
+    "digital": "OR",       // Include digital transformation stories
+    "politics": "NOT",     // Exclude political content
+    "war": "NOT",         // Exclude war-related news
+    "crime": "NOT",       // Exclude crime stories
+    "scandal": "NOT",     // Exclude controversial stories
+    "death": "NOT",       // Exclude death-related news
+    "disaster": "NOT"     // Exclude natural disasters
+  };
+  
+  let savedApiKey = localStorage.getItem('guardianApiKey');
+  const apiKey = savedApiKey || envApiKey || '';
+  
+  if (apiKey) {
+    fetchHeadlines(apiKey);
+  }
+
+  apiKeyForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const inputApiKey = document.getElementById('guardian-api-key').value;
+    await fetchHeadlines(inputApiKey);
+    localStorage.setItem('guardianApiKey', inputApiKey);
+  });
+
+  refreshNewsBtn?.addEventListener('click', async () => {
+    const currentApiKey = localStorage.getItem('guardianApiKey') || envApiKey || '';
+    if (currentApiKey) {
+      await fetchHeadlines(currentApiKey);
+    }
+  });
+
+  async function fetchHeadlines(apiKey) {
+    try {
+      // Build the q parameter for search terms with operators
+      let searchQuery = '';
+      
+      // Process AND terms first (must include)
+      const andTerms = Object.entries(SEARCH_TERMS)
+        .filter(([_, operator]) => operator === 'AND')
+        .map(([term, _]) => term);
+      
+      if (andTerms.length > 0) {
+        searchQuery += andTerms.join(' AND ');
+      }
+      
+      // Process OR terms (may include)
+      const orTerms = Object.entries(SEARCH_TERMS)
+        .filter(([_, operator]) => operator === 'OR')
+        .map(([term, _]) => term);
+      
+      if (orTerms.length > 0) {
+        if (searchQuery) searchQuery += ' AND (';
+        searchQuery += orTerms.join(' OR ');
+        if (searchQuery.includes(' AND (')) searchQuery += ')';
+      }
+      
+      // Process NOT terms (must not include)
+      const notTerms = Object.entries(SEARCH_TERMS)
+        .filter(([_, operator]) => operator === 'NOT')
+        .map(([term, _]) => `NOT ${term}`);
+      
+      if (notTerms.length > 0) {
+        if (searchQuery) searchQuery += ' AND ';
+        searchQuery += notTerms.join(' AND ');
+      }
+      
+      const params = new URLSearchParams({
+        'api-key': apiKey,
+        'section': 'business|technology|media|money',
+        'show-fields': 'headline,trailText,thumbnail,wordcount',
+        'page-size': ITEMS_TO_DISPLAY.toString(),
+        'order-by': 'relevance',
+        'from-date': new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        'show-tags': 'keyword'
+      });
+      
+      if (searchQuery) {
+        params.append('q', searchQuery);
+      }
+      
+      const response = await fetch(`${GUARDIAN_API_ENDPOINT}?${params}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch headlines');
+      }
+
+      const data = await response.json();
+      
+      if (newsDisplay && apiKeyForm && headlinesContainer) {
+        updateNewsDisplay(data.response.results);
+        newsDisplay.classList.remove('hidden');
+        apiKeyForm.classList.add('hidden');
+      }
+    } catch (error) {
+      alert('Error fetching news headlines. Please check your API key and try again.');
+      console.error('News fetch error:', error);
+    }
+  }
+
+  function updateNewsDisplay(articles) {
+    if (!headlinesContainer) return;
+    
+    headlinesContainer.innerHTML = '';
+    
+    articles.forEach(article => {
+      const articleElement = document.createElement('div');
+      articleElement.className = 'p-3 border border-gray-200 dark:border-gray-700 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors';
+      
+      const titleElement = document.createElement('a');
+      titleElement.href = article.webUrl;
+      titleElement.target = '_blank';
+      titleElement.className = 'text-lg font-semibold text-[var(--accent-color)] hover:underline';
+      titleElement.textContent = article.webTitle;
+      
+      const dateElement = document.createElement('div');
+      const publicationDate = new Date(article.webPublicationDate);
+      dateElement.className = 'text-sm text-gray-500 dark:text-gray-400 mt-1';
+      dateElement.textContent = publicationDate.toLocaleString();
+      
+      articleElement.appendChild(titleElement);
+      articleElement.appendChild(dateElement);
+      
+      if (article.fields && article.fields.trailText) {
+        const summaryElement = document.createElement('p');
+        summaryElement.className = 'text-sm text-gray-700 dark:text-gray-300 mt-2';
+        summaryElement.textContent = article.fields.trailText;
+        articleElement.appendChild(summaryElement);
+      }
+      
+      headlinesContainer.appendChild(articleElement);
+    });
+  }
+  
+  // Auto-refresh headlines every 30 minutes if we have a saved API key or env key
+  if (apiKey) {
+    setInterval(() => {
+      const currentApiKey = localStorage.getItem('guardianApiKey') || envApiKey || '';
+      if (currentApiKey) {
+        fetchHeadlines(currentApiKey);
+      }
+    }, 30 * 60 * 1000);
+  }
+</script> 
