@@ -1,0 +1,151 @@
+---
+import { Icon } from 'astro-icon/components'
+
+interface Props {
+  class?: string;
+  scrollSpeed?: number; // pixels per frame
+  showControls?: boolean;
+  initialDelay?: number; // delay in milliseconds before scrolling starts
+}
+
+const {
+  class: className = '',
+  scrollSpeed = 0.5,
+  showControls = false,
+  initialDelay = 5000
+} = Astro.props;
+---
+
+<div class:list={["auto-scroll-wrapper relative flex flex-col flex-1 overflow-hidden", className]}>
+  <div class="auto-scroll-content absolute w-full space-y-4">
+    <slot />
+  </div>
+  
+  {showControls && (
+    <div class="absolute bottom-0 left-0 p-2 z-10">
+      <button
+        id="toggle-scroll"
+        class="text-base text-[var(--accent-color)] hover:text-[var(--accent-color-dark)] hover:underline flex items-center gap-2"
+      >
+        <Icon name="mdi:pause" class="w-5 h-5" id="scroll-icon" />
+        <span id="scroll-text">Pause Scroll</span>
+      </button>
+    </div>
+  )}
+</div>
+
+<script define:vars={{ scrollSpeed, initialDelay }}>
+  // Find all auto-scroll containers on the page
+  document.querySelectorAll('.auto-scroll-wrapper').forEach((wrapper) => {
+    const content = wrapper.querySelector('.auto-scroll-content');
+    const toggleBtn = wrapper.querySelector('#toggle-scroll');
+    const scrollIcon = wrapper.querySelector('#scroll-icon');
+    const scrollText = wrapper.querySelector('#scroll-text');
+    
+    let scrollInterval = null;
+    let isScrolling = true;
+    let scrollPosition = 0;
+    let initialDelayTimeout = null;
+    
+    function startScrolling() {
+      if (scrollInterval) clearInterval(scrollInterval);
+      
+      // Clear any existing timeout
+      if (initialDelayTimeout) clearTimeout(initialDelayTimeout);
+      
+      // Set initial delay before starting the scroll
+      initialDelayTimeout = setTimeout(() => {
+        scrollInterval = setInterval(() => {
+          if (!content) return;
+          
+          // Get the full height of the content and the visible container height
+          const contentHeight = content.scrollHeight;
+          const visibleHeight = wrapper.clientHeight;
+          
+          // Increase scroll position
+          scrollPosition += scrollSpeed;
+          
+          // Reset when we've scrolled through all content
+          if (scrollPosition > contentHeight - visibleHeight + 50) {
+            scrollPosition = -20; // Start slightly above for smooth transition
+          }
+          
+          // Apply the scroll position
+          content.style.transform = `translateY(-${scrollPosition}px)`;
+        }, 16); // ~60fps for smooth scrolling
+      }, initialDelay);
+      
+      isScrolling = true;
+      updateScrollControls();
+    }
+    
+    function stopScrolling() {
+      if (scrollInterval) {
+        clearInterval(scrollInterval);
+        scrollInterval = null;
+      }
+      if (initialDelayTimeout) {
+        clearTimeout(initialDelayTimeout);
+        initialDelayTimeout = null;
+      }
+      isScrolling = false;
+      updateScrollControls();
+    }
+    
+    function toggleScrolling() {
+      if (isScrolling) {
+        stopScrolling();
+      } else {
+        startScrolling();
+      }
+    }
+    
+    function resetScroll() {
+      scrollPosition = 0;
+      if (content) {
+        content.style.transform = 'translateY(0)';
+      }
+      
+      // Start scrolling if not already scrolling
+      if (!scrollInterval) {
+        startScrolling();
+      }
+    }
+    
+    function updateScrollControls() {
+      if (!scrollIcon || !scrollText) return;
+      
+      if (isScrolling) {
+        scrollIcon.setAttribute('name', 'mdi:pause');
+        scrollText.textContent = 'Pause Scroll';
+      } else {
+        scrollIcon.setAttribute('name', 'mdi:play');
+        scrollText.textContent = 'Resume Scroll';
+      }
+    }
+    
+    // Initialize scrolling
+    startScrolling();
+    
+    // Add event listeners
+    toggleBtn?.addEventListener('click', toggleScrolling);
+    
+    // Pause on hover
+    wrapper.addEventListener('mouseenter', stopScrolling);
+    wrapper.addEventListener('mouseleave', () => {
+      if (!isScrolling) startScrolling();
+    });
+    
+    // Reset scroll when container size changes
+    const resizeObserver = new ResizeObserver(() => {
+      resetScroll();
+    });
+    resizeObserver.observe(wrapper);
+  });
+</script>
+
+<style>
+  .auto-scroll-wrapper {
+    min-height: 0; /* Required for proper flex behavior */
+  }
+</style> 

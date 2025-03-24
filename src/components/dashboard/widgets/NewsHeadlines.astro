@@ -1,29 +1,20 @@
 ---
 import { Icon } from 'astro-icon/components'
+import AutoScrollContainer from '../../ui/AutoScrollContainer.astro';
 
 // Try to get API key from environment variable
 const envApiKey = import.meta.env.NEWS_API_KEY || '';
 ---
 
 <div class="flex flex-col h-full overflow-hidden">
-  <div id="news-display" class="hidden flex-col h-full overflow-hidden">
-    <div class="flex items-center mb-4">
-      <Icon name="mdi:newspaper-variant-outline" class="w-8 h-8 text-[var(--accent-color)]" />
-      <h2 class="text-2xl font-bold text-[var(--accent-color)] ml-2">Top Headlines</h2>
-    </div>
-    <div class="relative flex-1 h-64 overflow-hidden">
-      <div id="headlines-container" class="absolute w-full  space-y-4">
-        <!-- Headlines will be displayed here -->
+  <div id="news-display" class="hidden flex flex-col h-full">
+    
+    <div class="flex items-center justify-between border-b-2 border-[var(--accent-color)] pb-2 mb-2">
+      <div class="flex items-center">
+        <Icon name="mdi:newspaper-variant-outline" class="w-8 h-8 text-[var(--accent-color)]" />
+        <h2 class="text-2xl font-bold text-[var(--accent-color)] ml-2">Top Headlines</h2>
       </div>
-    </div>
-    <div class="flex justify-between items-center mt-4">
-      <button
-        id="toggle-scroll"
-        class="text-base text-[var(--accent-color)] hover:text-[var(--accent-color-dark)] hover:underline flex items-center gap-2"
-      >
-        <Icon name="mdi:pause" class="w-5 h-5" id="scroll-icon" />
-        <span id="scroll-text">Pause Scroll</span>
-      </button>
+
       <button
         id="refresh-news"
         class="text-base text-[var(--accent-color)] hover:text-[var(--accent-color-dark)] hover:underline flex items-center gap-2"
@@ -32,6 +23,14 @@ const envApiKey = import.meta.env.NEWS_API_KEY || '';
         Refresh Headlines
       </button>
     </div>
+    
+    <AutoScrollContainer class="flex-1">
+      <div id="headlines-container" class="space-y-4">
+        <!-- Headlines will be displayed here -->
+      </div>
+    </AutoScrollContainer>
+
+    
   </div>
 
   <form id="api-key-form" class="flex-1 flex flex-col items-center justify-center space-y-4">
@@ -63,36 +62,31 @@ const envApiKey = import.meta.env.NEWS_API_KEY || '';
   const apiKeyForm = document.getElementById('api-key-form');
   const refreshNewsBtn = document.getElementById('refresh-news');
   const headlinesContainer = document.getElementById('headlines-container');
-  const toggleScrollBtn = document.getElementById('toggle-scroll');
-  const scrollIcon = document.getElementById('scroll-icon');
-  const scrollText = document.getElementById('scroll-text');
 
   const GUARDIAN_API_ENDPOINT = 'https://content.guardianapis.com/search';
-  const ITEMS_TO_DISPLAY = 10; // Increased for more content to scroll
-  const SCROLL_SPEED = 0.5; // px per frame (slower for easier reading)
+  const ITEMS_TO_DISPLAY = 10;
   
   // Define search terms with operators for Guardian API
   // Format: { "term": "operator" }
   // Operators: "AND", "OR", "NOT"
-  // Example: { "technology": "AND", "politics": "OR", "sports": "NOT" }
-  // This will search for content containing "technology" AND either containing "politics" OR NOT containing "sports"
+  // This configuration focuses on business/tech news while excluding controversial topics
   const SEARCH_TERMS = {
-    "technology": "OR",   // Must include technology
-    "digital": "OR",       // May include digital
-    "climate": "NOT",      // Must include climate
-    "politics": "NOT",
-    "sport": "NOT"         // Must not include sport
+    "business": "AND",     // Must include business-related content
+    "technology": "OR",    // Include tech news
+    "innovation": "OR",    // Include innovation stories
+    "marketing": "OR",     // Include marketing content
+    "startup": "OR",       // Include startup news
+    "digital": "OR",       // Include digital transformation stories
+    "politics": "NOT",     // Exclude political content
+    "war": "NOT",         // Exclude war-related news
+    "crime": "NOT",       // Exclude crime stories
+    "scandal": "NOT",     // Exclude controversial stories
+    "death": "NOT",       // Exclude death-related news
+    "disaster": "NOT"     // Exclude natural disasters
   };
   
   let savedApiKey = localStorage.getItem('guardianApiKey');
-  
-  // Check for API key in this order: localStorage, env variable, none
   const apiKey = savedApiKey || envApiKey || '';
-  
-  // Auto-scroll variables
-  let scrollInterval = null;
-  let isScrolling = true;
-  let scrollPosition = 0;
   
   if (apiKey) {
     fetchHeadlines(apiKey);
@@ -110,10 +104,6 @@ const envApiKey = import.meta.env.NEWS_API_KEY || '';
     if (currentApiKey) {
       await fetchHeadlines(currentApiKey);
     }
-  });
-  
-  toggleScrollBtn?.addEventListener('click', () => {
-    toggleScrolling();
   });
 
   async function fetchHeadlines(apiKey) {
@@ -153,13 +143,14 @@ const envApiKey = import.meta.env.NEWS_API_KEY || '';
       
       const params = new URLSearchParams({
         'api-key': apiKey,
-        'section': 'news',
-        'show-fields': 'headline,trailText',
+        'section': 'business|technology|media|money',
+        'show-fields': 'headline,trailText,thumbnail,wordcount',
         'page-size': ITEMS_TO_DISPLAY.toString(),
-        'order-by': 'newest'
+        'order-by': 'relevance',
+        'from-date': new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        'show-tags': 'keyword'
       });
       
-      // Add the query parameter if we have search terms
       if (searchQuery) {
         params.append('q', searchQuery);
       }
@@ -176,9 +167,6 @@ const envApiKey = import.meta.env.NEWS_API_KEY || '';
         updateNewsDisplay(data.response.results);
         newsDisplay.classList.remove('hidden');
         apiKeyForm.classList.add('hidden');
-        
-        // Reset scroll position when new headlines are loaded
-        resetScroll();
       }
     } catch (error) {
       alert('Error fetching news headlines. Please check your API key and try again.');
@@ -220,74 +208,6 @@ const envApiKey = import.meta.env.NEWS_API_KEY || '';
     });
   }
   
-  function startScrolling() {
-    if (scrollInterval) clearInterval(scrollInterval);
-    
-    scrollInterval = setInterval(() => {
-      if (!headlinesContainer) return;
-      
-      // Get the full height of the content and the visible container height
-      const containerParent = headlinesContainer.parentElement;
-      const contentHeight = headlinesContainer.scrollHeight;
-      const visibleHeight = containerParent.clientHeight;
-      
-      // Increase scroll position
-      scrollPosition += SCROLL_SPEED;
-      
-      // Reset when we've scrolled through all content, with a small delay at the bottom
-      if (scrollPosition > contentHeight - visibleHeight + 50) {
-        scrollPosition = -20; // Start slightly above to create a nice transition
-      }
-      
-      // Apply the scroll position
-      headlinesContainer.style.transform = `translateY(-${scrollPosition}px)`;
-    }, 16); // ~60fps for smooth scrolling
-    
-    isScrolling = true;
-    updateScrollControls();
-  }
-  
-  function stopScrolling() {
-    if (scrollInterval) {
-      clearInterval(scrollInterval);
-      scrollInterval = null;
-    }
-    isScrolling = false;
-    updateScrollControls();
-  }
-  
-  function toggleScrolling() {
-    if (isScrolling) {
-      stopScrolling();
-    } else {
-      startScrolling();
-    }
-  }
-  
-  function resetScroll() {
-    scrollPosition = 0;
-    if (headlinesContainer) {
-      headlinesContainer.style.transform = 'translateY(0)';
-    }
-    
-    // Start scrolling if not already scrolling
-    if (!scrollInterval) {
-      startScrolling();
-    }
-  }
-  
-  function updateScrollControls() {
-    if (!scrollIcon || !scrollText) return;
-    
-    if (isScrolling) {
-      scrollIcon.setAttribute('name', 'mdi:pause');
-      scrollText.textContent = 'Pause Scroll';
-    } else {
-      scrollIcon.setAttribute('name', 'mdi:play');
-      scrollText.textContent = 'Resume Scroll';
-    }
-  }
-  
   // Auto-refresh headlines every 30 minutes if we have a saved API key or env key
   if (apiKey) {
     setInterval(() => {
@@ -296,22 +216,5 @@ const envApiKey = import.meta.env.NEWS_API_KEY || '';
         fetchHeadlines(currentApiKey);
       }
     }, 30 * 60 * 1000);
-  }
-  
-  // Add event listeners for pausing scroll on hover/touch
-  headlinesContainer?.parentElement?.addEventListener('mouseenter', () => {
-    stopScrolling();
-  });
-  
-  headlinesContainer?.parentElement?.addEventListener('mouseleave', () => {
-    if (!isScrolling) startScrolling();
-  });
-  
-  // Add resize observer to reset scroll when container size changes
-  if (headlinesContainer) {
-    const resizeObserver = new ResizeObserver(() => {
-      resetScroll();
-    });
-    resizeObserver.observe(headlinesContainer.parentElement);
   }
 </script> 
