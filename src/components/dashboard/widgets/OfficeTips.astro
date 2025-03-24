@@ -1,0 +1,52 @@
+import SwiperWrapper from '../../SliderComponents/SwiperWrapper.astro';
+import SwiperSlide from '../../SliderComponents/SwiperSlide.astro';
+
+// Static tips data
+const officeTips = [
+  {
+    headline: "Stay Hydrated",
+    body: "Remember to drink water regularly throughout the day. Staying hydrated helps maintain focus and energy levels.",
+    link: "https://health.gov/hydration-tips"
+  },
+  {
+    headline: "Take Screen Breaks",
+    body: "Follow the 20-20-20 rule: Every 20 minutes, look at something 20 feet away for 20 seconds.",
+    link: "https://www.aoa.org/healthy-eyes/eye-health-for-life/computer-vision-syndrome"
+  },
+  {
+    headline: "Ergonomic Posture",
+    body: "Keep your screen at eye level and maintain good posture to prevent neck and back strain.",
+    link: "https://www.osha.gov/etools/computer-workstations"
+  }
+];
+
+<SwiperWrapper
+  autoplay={true}
+  autoplayDelay={8000}
+  loop={true}
+  pagination={true}
+  class="h-full"
+>
+  {officeTips.map(({ headline, body, link }) => (
+    <SwiperSlide>
+      <div class="h-full flex flex-col justify-center p-6">
+        <div class="space-y-4">
+          <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-200">
+            {headline}
+          </h3>
+          <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+            {body}
+          </p>
+          <a 
+            href={link}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-blue-600 dark:text-blue-400 hover:underline text-sm"
+          >
+            Learn more →
+          </a>
+        </div>
+      </div>
+    </SwiperSlide>
+  ))}
+</SwiperWrapper> 
