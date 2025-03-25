@@ -1,5 +1,6 @@
-import SwiperWrapper from '../../SliderComponents/SwiperWrapper.astro';
-import SwiperSlide from '../../SliderComponents/SwiperSlide.astro';
+---
+import DashboardSlider from '@components/ui/DashboardSlider.astro';
+import SwiperSlide from "@components/SliderComponents/SwiperSlide.astro"
 
 // Static tips data
 const officeTips = [
@@ -19,34 +20,16 @@ const officeTips = [
     link: "https://www.osha.gov/etools/computer-workstations"
   }
 ];
+---
 
-<SwiperWrapper
-  autoplay={true}
-  autoplayDelay={8000}
-  loop={true}
-  pagination={true}
-  class="h-full"
->
-  {officeTips.map(({ headline, body, link }) => (
-    <SwiperSlide>
-      <div class="h-full flex flex-col justify-center p-6">
-        <div class="space-y-4">
-          <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-200">
-            {headline}
-          </h3>
-          <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
-            {body}
-          </p>
-          <a 
-            href={link}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-blue-600 dark:text-blue-400 hover:underline text-sm"
-          >
-            Learn more →
-          </a>
-        </div>
-      </div>
-    </SwiperSlide>
-  ))}
-</SwiperWrapper> 
+<DashboardSlider>
+  <SwiperSlide>
+    FUCK
+  </SwiperSlide>
+  <SwiperSlide>
+    SHIT
+  </SwiperSlide>
+  <SwiperSlide>
+    PISS
+  </SwiperSlide>
+</DashboardSlider>

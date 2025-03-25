@@ -1,5 +1,5 @@
 ---
-import SwiperWrapper from '../../SliderComponents/SwiperWrapper.astro';
+import DashboardSlider from '@components/ui/DashboardSlider.astro';
 import SwiperSlide from '../../SliderComponents/SwiperSlide.astro';
 
 // Fetch multiple quotes during server-side rendering
@@ -10,13 +10,7 @@ const quotes = await Promise.all([
 ]);
 ---
 
-<SwiperWrapper
-  autoplay={true}
-  autoplayDelay={10000}
-  loop={true}
-  pagination={true}
-  class="h-full"
->
+<DashboardSlider>
   {quotes.map(({ text, author }) => (
     <SwiperSlide>
       <div class="h-full flex flex-col justify-center">
@@ -31,4 +25,4 @@ const quotes = await Promise.all([
       </div>
     </SwiperSlide>
   ))}
-</SwiperWrapper> 
+</DashboardSlider>

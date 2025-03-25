@@ -1,13 +1,14 @@
 ---
 // Import dashboard widgets
-import DateTime from "./widgets/DateTime.astro";
-import Weather from "./widgets/Weather.astro";
-import QuoteOfTheDay from "./widgets/QuoteOfTheDay.astro";
-import Placeholder from "../Placeholder.astro";
+import DateTime from "@components/dashboard/widgets/DateTime.astro";
+import Weather from "@components/dashboard/widgets/Weather.astro";
+import QuoteOfTheDay from "@components/dashboard/widgets/QuoteOfTheDay.astro";
+import Placeholder from "@components/Placeholder.astro";
 import DashboardSlider from "@components/ui/DashboardSlider.astro";
-import NewsHeadlines from "./widgets/NewsHeadlines.astro";
+import NewsHeadlines from "@components/dashboard/widgets/NewsHeadlines.astro";
 import SwiperSlide from "@components/SliderComponents/SwiperSlide.astro"
-import StockMarketFeed from "./widgets/StockMarketFeed.astro";
+import StockMarketFeed from "@components/dashboard/widgets/StockMarketFeed.astro";
+import OfficeTips from "@components/dashboard/widgets/OfficeTips.astro";
 ---
 
 <div class="h-screen w-screen p-4 ">
@@ -38,11 +39,23 @@ import StockMarketFeed from "./widgets/StockMarketFeed.astro";
       </DashboardSlider>
     </div>
     <div class="grid-cell area-5">
-      <Placeholder text="Team & Company Updates" />
+      
+      <DashboardSlider>
+        <SwiperSlide>
+          <NewsHeadlines />
+        </SwiperSlide>
+        <SwiperSlide>
+          <StockMarketFeed />
+        </SwiperSlide>
+        <SwiperSlide>
+          TEST SLIDE 3
+        </SwiperSlide>
+      </DashboardSlider>
     </div>
 
     <div class="grid-cell area-6">
-      <Placeholder text="Everyday Office Tips" />
+      <!-- <Placeholder text="Everyday Office Tips" /> -->
+      <!-- <OfficeTips/> -->
     </div>
     <!-- Grid End -->
   </div>
